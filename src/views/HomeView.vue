@@ -27,17 +27,24 @@
       <div v-if="showFilterTab" class="home__body--filters-tab">
         <filterTab
           v-for="(tabData, key) of filtersData"
+          @onSelect="selectFilter"
           :key="key"
           :filterData="tabData"
           :multipleSelect="tabData.header === 'languages' ? true : false"
         />
+
+        <button class="home__body--reset-btn">Reset</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { createNamespacedHelpers } from "vuex-composition-helpers";
+const { useGetters, useActions, useMutations } =
+  createNamespacedHelpers("stories");
+
 import MainButton from "@/components/MainButton";
 import FilterTab from "@/components/FilterTab";
 export default {
@@ -45,7 +52,7 @@ export default {
   components: { MainButton, FilterTab },
 
   setup() {
-    const showFilterTab = ref(false)
+    const showFilterTab = ref(false);
     const filtersData = ref([
       {
         header: "autorefresh",
@@ -53,19 +60,19 @@ export default {
           list: [
             {
               name: "10 Seconds",
-              value: "10s",
+              value: "10/s",
             },
             {
               name: "30 Seconds",
-              value: "30s",
+              value: "30/s",
             },
             {
               name: "1 Minute",
-              value: "1m",
+              value: "1/m",
             },
             {
               name: "10 Minute",
-              value: "10m",
+              value: "10/m",
             },
           ],
         },
@@ -117,13 +124,46 @@ export default {
         },
       },
     ]);
-    
-    const refresh = () => {};
+
+    //vuex
+    const { storiesData } = useGetters(["storiesData"]);
+    const { options } = useGetters(["options"]);
+    const { setData } = useMutations(["setData"]);
+    const { getStories } = useActions(["getStories"]);
+
+    onMounted(async () => {
+      await getStories();
+    });
+
+    //methods
+    const refresh = async () => {
+      await getStories();
+    };
+
+    const selectFilter = async (selectedValue, filterType) => {
+      const options = {
+        limit: 20,
+      };
+
+      if (filterType !== "autorefresh") {
+        if (typeof selectedValue === Object) {
+          selectedValue = selectedValue.join(",")
+        }
+        options[filterType] = selectedValue
+
+        setData({ options });
+        await getStories();
+      }
+
+    };
 
     return {
       showFilterTab,
       filtersData,
+      storiesData,
+      options,
       refresh,
+      selectFilter,
     };
   },
 };
@@ -179,6 +219,26 @@ export default {
       padding: 20px 24px;
       border-radius: 3px;
       background-color: #eee;
+    }
+
+    &--reset-btn {
+      height: 40px;
+      border-radius: 3px;
+      background-color: #3971c1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      width: 172px;
+      font-weight: bold;
+      color: white;
+      text-transform: uppercase;
+      border: unset;
+      transition: all 0.3s;
+
+      &:hover {
+        box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.582);
+      }
     }
   }
 }

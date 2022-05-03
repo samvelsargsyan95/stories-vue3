@@ -17,17 +17,17 @@
           <label>
             <input
               v-if="!multipleSelect"
-              type="radio"
-              :value="option.value"
               v-model="selectedFilter"
-              @input="filterSelectUnselect(option.name)"
+              @change="filterSelectUnselect(option.name)"
+              :value="option.value"
+              type="radio"
             />
             <input
               v-else
-              type="checkbox"
-              :value="option.value"
               v-model="selectedFilters"
-              @input="filterSelectUnselect(option.name)"
+              :value="option.value"
+              @change="filterSelectUnselect(option.name)"
+              type="checkbox"
             />
             {{ option.name }}
           </label>
@@ -89,12 +89,15 @@ export default {
   padding: 5px 10px 4px;
   border-radius: 3px;
   background-color: white;
+  box-sizing: border-box;
 
   &__headers-parent {
     height: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    cursor:pointer;
+
   }
 
   &__header {
@@ -124,6 +127,7 @@ export default {
       color: #292929;
       font-weight: bold;
       margin-bottom: 15px;
+      text-transform: uppercase;
     }
 
     & > div {
@@ -136,6 +140,9 @@ export default {
       margin-bottom: 25px;
       justify-content: space-between;
       text-transform: uppercase;
+      & label, & input {
+        cursor: pointer;
+      }
     }
   }
 }

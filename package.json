@@ -11,10 +11,14 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
+    "axios": "^0.27.2",
+    "click-outside-vue3": "^4.0.1",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
+    "vue-axios": "^3.4.1",
     "vue-router": "^4.0.3",
-    "vuex": "^4.0.0"
+    "vuex": "^4.0.0",
+    "vuex-composition-helpers": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
