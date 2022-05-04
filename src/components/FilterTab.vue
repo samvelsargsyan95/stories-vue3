@@ -55,7 +55,7 @@ export default {
 
   setup(props, { emit }) {
     const selectedFilters = ref([]);
-    const selectedFilter = ref("");
+    const selectedFilter = ref(null);
     const listShow = ref(false);
     let selectedHeader = ref("");
 
@@ -80,7 +80,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .filter-cont {
   position: relative;
   width: 172px;

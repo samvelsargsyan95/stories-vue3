@@ -12,7 +12,7 @@
 
       <div class="home__body--buttons-cont">
         <MainButton
-          @onClick="refresh"
+          @onClick="$router.go()"
           type="refresh"
           buttonText="Refresh"
           style="margin-right: 5px"
@@ -27,13 +27,13 @@
       <div v-if="showFilterTab" class="home__body--filters-tab">
         <filterTab
           v-for="(tabData, key) of filtersData"
-          @onSelect="selectFilter"
+          @onSelect="selectFilter"   
           :key="key"
           :filterData="tabData"
           :multipleSelect="tabData.header === 'languages' ? true : false"
         />
 
-        <button class="home__body--reset-btn">Reset</button>
+        <button @click="reset" class="home__body--reset-btn">Reset</button>
       </div>
     </div>
   </div>
@@ -52,6 +52,7 @@ export default {
   components: { MainButton, FilterTab },
 
   setup() {
+    let autorefreshInterval = ref(null);
     const showFilterTab = ref(false);
     const filtersData = ref([
       {
@@ -127,7 +128,6 @@ export default {
 
     //vuex
     const { storiesData } = useGetters(["storiesData"]);
-    const { options } = useGetters(["options"]);
     const { setData } = useMutations(["setData"]);
     const { getStories } = useActions(["getStories"]);
 
@@ -136,40 +136,71 @@ export default {
     });
 
     //methods
-    const refresh = async () => {
+    const reset = async () => {
+      setData({
+        autorefresh: null,
+        order: null,
+        languages: []
+      })
+
+      clearInterval(autorefreshInterval)
       await getStories();
     };
 
     const selectFilter = async (selectedValue, filterType) => {
-      const options = {
-        limit: 20,
-      };
-
-      if (filterType !== "autorefresh") {
-        if (typeof selectedValue === Object) {
-          selectedValue = selectedValue.join(",")
-        }
-        options[filterType] = selectedValue
-
-        setData({ options });
-        await getStories();
+      const filterTypes = ['autorefresh', 'order', 'languages']
+      
+      if (typeof selectedValue === Object) {
+        selectedValue = selectedValue.join(",");
       }
 
+      filterTypes.map((item) => {
+        if (item === filterType) {
+          setData({ [filterType]: selectedValue });
+        }
+      })
+
+      if (filterType === 'autorefresh') {
+        let interval = selectedValue.split('/');
+        let miliseconds = 0;
+
+        if (interval[1] === 's') {
+          miliseconds = interval[0] * 1000 //seconds to miliseconds
+        }
+
+        if (interval[1] === 'm') {
+          miliseconds = interval[0] * 60000 //minutes to miliseconds
+        }
+
+        clearInterval(autorefreshInterval)
+        autoRefresh(miliseconds)
+      }
+
+      if (filterType !== 'autorefresh') {
+        await getStories();
+      }
     };
+
+    const autoRefresh = (miliseconds) => {
+      autorefreshInterval = setInterval(async  () => {
+        await getStories()
+      }, miliseconds)
+
+    }
 
     return {
       showFilterTab,
       filtersData,
       storiesData,
-      options,
-      refresh,
+      reset,
+      autoRefresh,
       selectFilter,
     };
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .home {
   background-color: #f7f7f7;
   height: 100vh;

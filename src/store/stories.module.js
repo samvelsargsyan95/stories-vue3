@@ -5,9 +5,11 @@ export const stories = {
     state: {
         storiesData: [],
         scrollReload: false,
-        options: {
-            limit: 20
-        }
+
+        //filters
+        autorefresh: null,
+        order: null,
+        languages: []
     },
     mutations: {
         setData(state, data) {
@@ -19,11 +21,23 @@ export const stories = {
 
     actions: {
         async getStories({ state, commit }) {
+            const options = {
+                limit: 20
+            }
+
             let query = null
 
-            if (Object.keys(state.options).length) {
-                query = Object.keys(state.options).map(
-                    key => key + '=' + state.options[key]
+            if (state.order) {
+                options.order = state.order
+            }
+
+            if (state.languages.length) {
+                options.languages = state.languages.join(',')
+            }
+
+            if (Object.keys(options).length) {
+                query = Object.keys(options).map(
+                    key => key + '=' + options[key]
                 ).join('&');
             }
 
@@ -32,18 +46,14 @@ export const stories = {
             }
 
             await RequestService.read(`/stories?${query}`).then((response) => {
-                console.log(response.data.stories)
                 commit('setData', { storiesData: response.data.stories })
             })
-
             
         }
     },
 
     getters: {
         storiesData: ({ storiesData }) => storiesData,
-        options: ({ options }) => options,
-
     },
 
 };
