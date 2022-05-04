@@ -62,7 +62,7 @@ nav {
 
 
 .mr-5 {
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .mb-12 {
@@ -82,7 +82,7 @@ nav {
 }
 
 .h-16 {
-  width: 16px;
+  height: 16px;
 }
 
 
