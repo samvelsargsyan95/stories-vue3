@@ -5,11 +5,13 @@ export const stories = {
     state: {
         storiesData: [],
         scrollReload: false,
+        limit: 20,
 
         //filters
         autorefresh: null,
         order: null,
-        languages: []
+        languages: [],
+        
     },
     mutations: {
         setData(state, data) {
@@ -21,9 +23,7 @@ export const stories = {
 
     actions: {
         async getStories({ state, commit }) {
-            const options = {
-                limit: 20
-            }
+            const options = {}
 
             let query = null
 
@@ -35,14 +35,20 @@ export const stories = {
                 options.languages = state.languages.join(',')
             }
 
+            if (state.scrollReload) {
+                commit('setData', { limit : state.limit += 5})                
+                query += `page_token=98807224-712f-4658-9d31-98f77773333`
+            }else {
+                commit('setData', { limit : 20 })
+            }
+
+            options.limit = state.limit
+            
+
             if (Object.keys(options).length) {
                 query = Object.keys(options).map(
                     key => key + '=' + options[key]
                 ).join('&');
-            }
-
-            if (state.scrollReload) {
-                query += `&page_token=98807224-712f-4658-9d31-98f77773333`
             }
 
             await RequestService.read(`/stories?${query}`).then((response) => {
