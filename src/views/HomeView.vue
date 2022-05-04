@@ -1,7 +1,7 @@
 <template>
   <div class="home" id="home">
     <div class="home__header">
-      <router-link to="/home">
+      <router-link to="/">
         <img src="@/assets/logo.png" />
       </router-link>
       <div class="home__header--user"></div>
