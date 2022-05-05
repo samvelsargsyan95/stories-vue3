@@ -267,8 +267,7 @@ export default {
       let d = document.documentElement;
       let offset = d.scrollTop + window.innerHeight;
       let height = d.offsetHeight;
-
-      if (offset >= height) {
+      if (offset >= height - 10) {
         setData({scrollReload: true})
         await getStories();
 
