@@ -20,8 +20,5 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-#� �s�a�m�v�e�l�-�s�a�r�g�s�y�a�n�-�t�e�s�t�-�p�r�o�j�e�c�t�
-�
-�
+### Task Description
+Need to do an API call to get stories, top part there is a filter part, after every filter changing need to do an API call to get new data. With scroll, if the scroll at the bottom of the page, needs to get more stories.
